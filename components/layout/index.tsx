@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sidebar } from '@/components';
+import { Sidebar, Header } from '@/components';
 
 import { NextUIProvider } from '@nextui-org/react';
 
@@ -19,6 +19,7 @@ interface Props {
 const Layout = ({ children }: Props) => {
 	return (
 		<ThirdwebProvider
+			theme='light'
 			supportedWallets={[
 				metamaskWallet(),
 				walletConnect({ projectId: WALLET_CONNECT_ID }),
@@ -27,8 +28,13 @@ const Layout = ({ children }: Props) => {
 		>
 			<NextUIProvider>
 				<>
-					<Sidebar />
-					<main>{children}</main>
+					<div className='flex flex-row'>
+						<Sidebar />
+						<div className='w-full flex flex-col'>
+							<Header />
+							{children}
+						</div>
+					</div>
 				</>
 			</NextUIProvider>
 		</ThirdwebProvider>
