@@ -56,7 +56,7 @@ const Sidebar = () => {
 			icon: (
 				<Setting
 					set='bold'
-					primaryColor={activeTab === 'bookmarks' ? '#E0E1E2' : '#9CA3AF'}
+					primaryColor={activeTab === 'dashboard' ? '#E0E1E2' : '#9CA3AF'}
 					size={26}
 				/>
 			),
@@ -65,6 +65,7 @@ const Sidebar = () => {
 	];
 
 	const handleClick = (tab: Tabs) => {
+		setActiveTab(tab);
 		router.push(tab === 'home' ? '/' : `/${tab}`);
 	};
 
@@ -85,7 +86,7 @@ const Sidebar = () => {
 							key={index}
 							light
 							size='lg'
-							onPress={() => setActiveTab(tab.name as Tabs)}
+							onPress={() => handleClick(tab.name as Tabs)}
 							icon={tab.icon}
 							className={`text-white text-lg justify-start pl-16 w-full py-8 rounded-3xl ${
 								activeTab === tab.name
@@ -104,8 +105,8 @@ const Sidebar = () => {
 					light
 					onPress={disconnect}
 					disabled={!address}
-					icon={<Logout set='bold' primaryColor='#9CA3AF' size={26} />}
-					className='text-gray-300 text-lg'
+					icon={<Logout set='bold' primaryColor='#fff' size={26} />}
+					className='text-white text-lg'
 				>
 					Log out
 				</Button>

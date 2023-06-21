@@ -1,29 +1,18 @@
 import '@/styles/globals.css';
+import type { ReactElement, ReactNode } from 'react';
+import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 
-import { NextUIProvider } from '@nextui-org/react';
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+	getLayout?: (page: ReactElement) => ReactNode;
+};
 
-import {
-	ThirdwebProvider,
-	metamaskWallet,
-	walletConnect,
-	localWallet,
-} from '@thirdweb-dev/react';
+type AppPropsWithLayout = AppProps & {
+	Component: NextPageWithLayout;
+};
 
-import { WALLET_CONNECT_ID } from '@/utils';
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
+	const getLayout = Component.getLayout ?? ((page) => page);
 
-export default function App({ Component, pageProps }: AppProps) {
-	return (
-		<ThirdwebProvider
-			supportedWallets={[
-				metamaskWallet(),
-				walletConnect({ projectId: WALLET_CONNECT_ID }),
-				localWallet({ persist: true }),
-			]}
-		>
-			<NextUIProvider>
-				<Component {...pageProps} />
-			</NextUIProvider>
-		</ThirdwebProvider>
-	);
+	return getLayout(<Component {...pageProps} />);
 }
