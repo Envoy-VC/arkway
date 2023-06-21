@@ -3,9 +3,9 @@ import { Avatar, Button } from '@nextui-org/react';
 import { useAddress, useDisconnect } from '@thirdweb-dev/react';
 import { useRouter } from 'next/navigation';
 
-import { Bookmark, Folder, Logout, Star } from 'react-iconly';
+import { Bookmark, Folder, Logout, Setting, Star } from 'react-iconly';
 
-export type Tabs = 'home' | 'favorites' | 'bookmarks';
+export type Tabs = 'home' | 'favorites' | 'bookmarks' | 'dashboard';
 
 const Sidebar = () => {
 	const [activeTab, setActiveTab] = React.useState<Tabs>('home');
@@ -36,7 +36,7 @@ const Sidebar = () => {
 					size={26}
 				/>
 			),
-			link: '/',
+			link: '/favorites',
 		},
 		{
 			name: 'bookmarks',
@@ -48,7 +48,19 @@ const Sidebar = () => {
 					size={26}
 				/>
 			),
-			link: '/',
+			link: '/bookmarks',
+		},
+		{
+			name: 'dashboard',
+			content: 'Dashboard',
+			icon: (
+				<Setting
+					set='bold'
+					primaryColor={activeTab === 'bookmarks' ? '#E0E1E2' : '#9CA3AF'}
+					size={26}
+				/>
+			),
+			link: '/dashboard',
 		},
 	];
 
@@ -75,7 +87,7 @@ const Sidebar = () => {
 							size='lg'
 							onPress={() => setActiveTab(tab.name as Tabs)}
 							icon={tab.icon}
-							className={`text-white text-lg  w-full py-8 rounded-3xl ${
+							className={`text-white text-lg justify-start pl-16 w-full py-8 rounded-3xl ${
 								activeTab === tab.name
 									? 'bg-[#583DA1] text-white font-medium'
 									: 'text-gray-400 font-normal'
