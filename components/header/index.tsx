@@ -14,6 +14,7 @@ const Header = () => {
 		>
 			<div className='flex flex-row gap-2'>
 				<Button
+					auto
 					light
 					icon={<PaperPlus set='bold' primaryColor='#000000' size={24} />}
 					className='text-md font-medium py-6'
@@ -23,6 +24,7 @@ const Header = () => {
 				<Input
 					clearable
 					contentLeft={<Search set='light' primaryColor='#697177' size={20} />}
+					aria-label='Search'
 					contentLeftStyling={false}
 					className='w-[300px] hidden lg:flex'
 					css={{
