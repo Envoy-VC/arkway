@@ -8,7 +8,7 @@ const CustomConnectButton = () => {
 	return (
 		<div>
 			{!address ? (
-				<ConnectWallet className='!w-[200px] !rounded-3xl !bg-[#7956da] !text-white !py-4' />
+				<ConnectWallet className='!w-[200px] !rounded-xl !bg-[#7956da] !text-white !py-4' />
 			) : (
 				<Dropdown placement='bottom-right'>
 					<Dropdown.Trigger>
