@@ -3,6 +3,8 @@ import React from 'react';
 import { Button, Dropdown, Image } from '@nextui-org/react';
 import { Filter2, InfoSquare, Paper } from 'react-iconly';
 
+import Upload from '../upload';
+
 import {
 	pdfs,
 	photos,
@@ -87,7 +89,7 @@ const Toolbar = () => {
 				</div>
 			</div>
 			{isFilterSelected && (
-				<div className='px-8'>
+				<div className='px-8 mb-4'>
 					<Dropdown>
 						<Dropdown.Button
 							bordered
@@ -126,6 +128,9 @@ const Toolbar = () => {
 					</Dropdown>
 				</div>
 			)}
+			<div className='flex xl:hidden px-[12px]'>
+				<Upload />
+			</div>
 		</div>
 	);
 };

@@ -74,10 +74,10 @@ const NavBar = () => {
 	];
 
 	const handleClick = (tab: Tabs) => {
-		setActiveTab(tab);
 		if (tab === 'logout') {
 			disconnect();
 		} else {
+			setActiveTab(tab);
 			router.push(tab === 'home' ? '/' : `/${tab}`);
 		}
 	};
@@ -85,7 +85,7 @@ const NavBar = () => {
 	return (
 		<Navbar isBordered variant='sticky' className='flex xl:hidden'>
 			<Navbar.Toggle showIn='lg' />
-			<Navbar.Brand>
+			<Navbar.Brand className='flex justify-start px-4 w-full' as='div'>
 				<span className={`${inter.className} text-xl font-bold`}>ARKWAY</span>
 			</Navbar.Brand>
 			<Navbar.Content
