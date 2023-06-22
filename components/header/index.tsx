@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] });
 const Header = () => {
 	return (
 		<div
-			className={`${inter.className} flex flex-row justify-between items-center p-8 shadow-sm`}
+			className={`${inter.className} flex flex-row justify-between items-center p-8 py-4 shadow-sm`}
 		>
 			<div className='flex flex-row gap-2'>
 				<Button
