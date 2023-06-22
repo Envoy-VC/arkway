@@ -10,14 +10,14 @@ const inter = Inter({ subsets: ['latin'] });
 const Header = () => {
 	return (
 		<div
-			className={`${inter.className} flex flex-row justify-between items-center p-8 py-4 shadow-sm`}
+			className={`${inter.className} hidden xl:flex flex-row justify-between items-center p-8 py-4 shadow-sm`}
 		>
-			<div className='flex flex-row gap-2'>
+			<div className='flex flex-row gap-4 w-fit items-center'>
 				<Button
 					auto
 					light
 					icon={<PaperPlus set='bold' primaryColor='#000000' size={24} />}
-					className='text-md font-medium py-6'
+					className='font-medium py-6 z-0'
 				>
 					Add file
 				</Button>
@@ -37,7 +37,9 @@ const Header = () => {
 					placeholder='Search...'
 				/>
 			</div>
-			<CustomConnectButton />
+			<div className='hidden xl:flex'>
+				<CustomConnectButton />
+			</div>
 		</div>
 	);
 };

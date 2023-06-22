@@ -4,10 +4,9 @@ import { useAddress, useDisconnect } from '@thirdweb-dev/react';
 import { useRouter } from 'next/navigation';
 
 import { Bookmark, Folder, Logout, Setting, Star } from 'react-iconly';
-
 import logo from '@/public/logo.png';
 
-export type Tabs = 'home' | 'favorites' | 'bookmarks' | 'dashboard';
+import { Tabs } from '@/types';
 
 const Sidebar = () => {
 	const [activeTab, setActiveTab] = React.useState<Tabs>('home');

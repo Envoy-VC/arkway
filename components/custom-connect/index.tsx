@@ -16,7 +16,7 @@ const CustomConnectButton = () => {
 							bordered
 							as='button'
 							color='secondary'
-							size='xl'
+							size='lg'
 							src={'https://i.pravatar.cc/150?u=a042581f4e29026704d'}
 						/>
 					</Dropdown.Trigger>
