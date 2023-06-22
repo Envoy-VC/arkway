@@ -1,8 +1,9 @@
 import React from 'react';
 
-import { Button, Input } from '@nextui-org/react';
+import { Input } from '@nextui-org/react';
 import CustomConnectButton from '../custom-connect';
-import { PaperPlus, Search } from 'react-iconly';
+import Upload from '../upload';
+import { Search } from 'react-iconly';
 
 import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
@@ -13,14 +14,7 @@ const Header = () => {
 			className={`${inter.className} hidden xl:flex flex-row justify-between items-center p-8 py-4 shadow-sm`}
 		>
 			<div className='flex flex-row gap-4 w-fit items-center'>
-				<Button
-					auto
-					light
-					icon={<PaperPlus set='bold' primaryColor='#000000' size={24} />}
-					className='font-medium py-6 z-0'
-				>
-					Add file
-				</Button>
+				<Upload />
 				<Input
 					clearable
 					contentLeft={<Search set='light' primaryColor='#697177' size={20} />}
