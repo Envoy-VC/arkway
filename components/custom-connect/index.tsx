@@ -39,7 +39,7 @@ const CustomConnectButton = () => {
 		<div>
 			{!address ? (
 				<ConnectWallet className='!w-[200px] !rounded-xl !bg-[#7956da] !text-white !py-4' />
-			) : data !== null ? (
+			) : data !== null && error?.code !== 'not-found' ? (
 				<Dropdown placement='bottom-right'>
 					<Dropdown.Trigger>
 						<Avatar
