@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { useDropzone } from 'react-dropzone';
+import { useAddress, useStorage } from '@thirdweb-dev/react';
 import { Button, Modal, Progress } from '@nextui-org/react';
 import { PaperPlus, PaperUpload, Upload as UploadFile } from 'react-iconly';
 
@@ -8,6 +9,9 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 const Upload = () => {
+	const address = useAddress();
+	const storage = useStorage();
+
 	const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
 	const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
 		accept: {
@@ -37,10 +41,35 @@ const Upload = () => {
 	const handleUpload = async () => {
 		try {
 			setIsUploading(true);
+			if (acceptedFiles.length === 0) return;
+			if (acceptedFiles.length === 1) {
+				const file = acceptedFiles[0];
+				const uri = await storage!.upload(file, {
+					uploadWithoutDirectory: true,
+					alwaysUpload: true,
+					onProgress: (progress) => {
+						setUploadProgress(
+							Number((progress.progress / progress.total) * 100)
+						);
+					},
+				});
+			} else {
+				const uris = await storage!.uploadBatch(acceptedFiles, {
+					alwaysUpload: true,
+					onProgress: (progress) => {
+						setUploadProgress(
+							Number((progress.progress / progress.total) * 100)
+						);
+					},
+				});
+				console.log(uris);
+			}
 		} catch (error) {
 			console.log(error);
 		} finally {
 			setIsUploading(false);
+			acceptedFiles.length = 0;
+			setUploadProgress(0);
 		}
 	};
 
@@ -108,12 +137,15 @@ const Upload = () => {
 							Upload
 						</Button>
 					) : (
-						<Progress
-							indeterminated={uploadProgress === 0 || uploadProgress === 100}
-							value={uploadProgress}
-							color='secondary'
-							status='secondary'
-						/>
+						<div className='flex flex-row gap-2 items-center'>
+							<Progress
+								indeterminated={uploadProgress === 100}
+								value={uploadProgress}
+								color='secondary'
+								status='secondary'
+							/>
+							<div>{`${Math.floor(uploadProgress)}%`}</div>
+						</div>
 					)}
 				</Modal.Body>
 			</Modal>

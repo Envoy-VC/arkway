@@ -56,7 +56,10 @@ const Dashboard: NextPageWithLayout = () => {
 			const res = await polybase
 				.collection('User')
 				.record(address!)
-				.call('updateUser', [profile.name || '', profile.avatar || '']);
+				.call('updateUser', [
+					profile.name ? profile.name : data?.data.name,
+					profile.avatar ? profile.avatar : data?.data.avatar,
+				]);
 		} catch (error) {
 			console.log(error);
 		} finally {
