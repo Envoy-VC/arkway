@@ -5,6 +5,10 @@ import { useAddress, useStorage } from '@thirdweb-dev/react';
 import { Button, Modal, Progress } from '@nextui-org/react';
 import { PaperPlus, PaperUpload, Upload as UploadFile } from 'react-iconly';
 
+import { usePolybase, useDocument } from '@polybase/react';
+
+import { FileType } from '@/types';
+
 import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
@@ -34,6 +38,11 @@ const Upload = () => {
 	const [isUploading, setIsUploading] = React.useState<boolean>(false);
 	const [uploadProgress, setUploadProgress] = React.useState<number>(0);
 
+	const polybase = usePolybase();
+	const { data, error, loading } = useDocument(
+		polybase.collection('User').record(address!)
+	);
+
 	const modalHandler = () => {
 		setIsUploading(false);
 		acceptedFiles.length = 0;
@@ -47,15 +56,30 @@ const Upload = () => {
 			if (acceptedFiles.length === 0) return;
 			if (acceptedFiles.length === 1) {
 				const file = acceptedFiles[0];
-				const uri = await storage!.upload(file, {
+				const fileCid = await storage!.upload(file, {
 					uploadWithoutDirectory: true,
-					alwaysUpload: true,
+					alwaysUpload: false,
 					onProgress: (progress) => {
 						setUploadProgress(
 							Number((progress.progress / progress.total) * 100)
 						);
 					},
 				});
+				const metadata: FileType = {
+					name: file.name,
+					type: file.type,
+					size: file.size,
+					cid: fileCid,
+				};
+
+				const ipfsHash = await storage!.upload(JSON.stringify(metadata), {
+					uploadWithoutDirectory: true,
+					alwaysUpload: false,
+				});
+				const res = await polybase
+					.collection('User')
+					.record(address!)
+					.call('addFile', [ipfsHash.slice(7)]);
 			} else {
 				const uris = await storage!.uploadBatch(acceptedFiles, {
 					alwaysUpload: true,
@@ -65,7 +89,32 @@ const Upload = () => {
 						);
 					},
 				});
-				console.log(uris);
+
+				const metadata: FileType[] = [];
+				for (let i = 0; i < acceptedFiles.length; i++) {
+					const file = acceptedFiles[i];
+					metadata.push({
+						name: file.name,
+						type: file.type,
+						size: file.size,
+						cid: uris[i],
+					});
+				}
+
+				let arr: string[] = [];
+
+				const cids = await storage!
+					.uploadBatch(metadata, {
+						uploadWithoutDirectory: false,
+						alwaysUpload: false,
+					})
+					.then((res) => (arr = res.map((hash) => hash.slice(7))));
+
+				const res = await polybase
+					.collection('User')
+					.record(address!)
+					.call('updateFiles', [[...data?.data.files, ...arr]]);
+				console.log(arr);
 			}
 		} catch (error) {
 			console.log(error);
