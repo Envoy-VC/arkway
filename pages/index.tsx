@@ -10,9 +10,9 @@ const inter = Inter({ subsets: ['latin'] });
 
 const Home: NextPageWithLayout = () => {
 	return (
-		<main className={`${inter.className}`}>
+		<main className={`${inter.className} bg-[#F6F6F6] h-full`}>
 			<Toolbar />
-			<div className='flex flex-row flex-wrap gap-4 items-center p-8'>
+			<div className='flex flex-row flex-wrap gap-4 items-center justify-around lg:justify-start p-8'>
 				{Array(4)
 					.fill(1)
 					.map((_, i) => (

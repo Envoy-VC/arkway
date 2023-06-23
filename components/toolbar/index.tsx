@@ -73,7 +73,7 @@ const Toolbar = () => {
 	];
 
 	return (
-		<div className={`${inter.className} flex flex-col`}>
+		<div className={`${inter.className} flex flex-col bg-[#F6F6F6]`}>
 			<div
 				className={`${inter.className} flex flex-row justify-between items-center p-8`}
 			>
