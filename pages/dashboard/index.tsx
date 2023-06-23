@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import type { NextPageWithLayout } from '../_app';
 
 import Layout from '@/components/layout';
+import NestedLayout from '@/components/layout/nested-layout';
 
 import { Input, Button, Avatar, Loading } from '@nextui-org/react';
 import { Upload, Edit } from 'react-iconly';
@@ -129,7 +130,11 @@ const Dashboard: NextPageWithLayout = () => {
 };
 
 Dashboard.getLayout = function getLayout(page: ReactElement) {
-	return <Layout>{page}</Layout>;
+	return (
+		<Layout>
+			<NestedLayout>{page}</NestedLayout>
+		</Layout>
+	);
 };
 
 export default Dashboard;
