@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useRouter } from 'next/navigation';
 import { ConnectWallet, useAddress, useDisconnect } from '@thirdweb-dev/react';
 import { Dropdown, Avatar, Button, Loading } from '@nextui-org/react';
 
@@ -9,8 +8,6 @@ import { usePolybase, useDocument } from '@polybase/react';
 import { AddUser } from 'react-iconly';
 
 const CustomConnectButton = () => {
-	const router = useRouter();
-
 	const address = useAddress();
 	const disconnect = useDisconnect();
 
@@ -33,13 +30,8 @@ const CustomConnectButton = () => {
 	};
 
 	const handleAction = (actionKey: string) => {
-		if (actionKey === '/logout') {
+		if (actionKey === 'logout') {
 			disconnect();
-			router.push('/');
-		} else if (actionKey === '') {
-			router.push('/dashboard');
-		} else {
-			router.push(actionKey);
 		}
 	};
 
@@ -66,19 +58,13 @@ const CustomConnectButton = () => {
 						color='secondary'
 						onAction={(actionKey) => handleAction(actionKey as string)}
 					>
-						<Dropdown.Item key='none' className='h-12'>
+						<Dropdown.Item key='none' className='h-12 py-8'>
 							<div className='flex font-bold'>Signed in as</div>
 							<div className='flex font-bold'>
 								{data?.data.id.slice(0, 10) + '...' + data?.data.id.slice(35)}
 							</div>
 						</Dropdown.Item>
-						<Dropdown.Item key='/' withDivider>
-							My Cloud
-						</Dropdown.Item>
-						<Dropdown.Item key='/favorites'>Favorites</Dropdown.Item>
-						<Dropdown.Item key='/bookmarks'>Bookmarks</Dropdown.Item>
-						<Dropdown.Item key='/dashboard'>Dashboard</Dropdown.Item>
-						<Dropdown.Item key='/logout' withDivider color='error'>
+						<Dropdown.Item key='logout' withDivider color='error'>
 							Logout
 						</Dropdown.Item>
 					</Dropdown.Menu>

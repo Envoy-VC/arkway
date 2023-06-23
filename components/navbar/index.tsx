@@ -12,11 +12,15 @@ import { Tabs } from '@/types';
 import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
-const NavBar = () => {
+interface Props {
+	activeTab: Tabs;
+	setActiveTab: React.Dispatch<React.SetStateAction<Tabs>>;
+}
+
+const NavBar = ({ activeTab, setActiveTab }: Props) => {
 	const router = useRouter();
 	const disconnect = useDisconnect();
 
-	const [activeTab, setActiveTab] = React.useState<Tabs>('home');
 	const tabs = [
 		{
 			name: 'home',

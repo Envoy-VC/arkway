@@ -8,8 +8,12 @@ import logo from '@/public/logo.png';
 
 import { Tabs } from '@/types';
 
-const Sidebar = () => {
-	const [activeTab, setActiveTab] = React.useState<Tabs>('home');
+interface Props {
+	activeTab: Tabs;
+	setActiveTab: React.Dispatch<React.SetStateAction<Tabs>>;
+}
+
+const Sidebar = ({ activeTab, setActiveTab }: Props) => {
 	const router = useRouter();
 	const address = useAddress();
 	const disconnect = useDisconnect();

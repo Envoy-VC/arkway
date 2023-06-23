@@ -12,6 +12,7 @@ import {
 
 import { PolybaseProvider } from '@polybase/react';
 import { Polybase } from '@polybase/client';
+import { Tabs } from '@/types';
 
 import { WALLET_CONNECT_ID, POLYBASE_NAMESPACE } from '@/utils';
 
@@ -24,6 +25,7 @@ interface Props {
 }
 
 const Layout = ({ children }: Props) => {
+	const [activeTab, setActiveTab] = React.useState<Tabs>('home');
 	return (
 		<ThirdwebProvider
 			theme='light'
@@ -36,9 +38,9 @@ const Layout = ({ children }: Props) => {
 			<PolybaseProvider polybase={polybase}>
 				<NextUIProvider>
 					<>
-						<NavBar />
+						<NavBar activeTab={activeTab} setActiveTab={setActiveTab} />
 						<div className='flex flex-row'>
-							<Sidebar />
+							<Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 							<div className='w-full flex flex-col'>
 								<Header />
 								<Toolbar />
