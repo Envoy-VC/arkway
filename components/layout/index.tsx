@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavBar, Sidebar, Header, Toolbar } from '@/components';
+import { NavBar, Sidebar, Header } from '@/components';
 
 import { NextUIProvider } from '@nextui-org/react';
 
@@ -43,7 +43,6 @@ const Layout = ({ children }: Props) => {
 							<Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 							<div className='w-full flex flex-col'>
 								<Header />
-								<Toolbar />
 								{children}
 							</div>
 						</div>
