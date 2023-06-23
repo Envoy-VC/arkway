@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@nextui-org/react": "^1.0.0-beta.13",
+    "@polybase/client": "^0.6.2",
+    "@polybase/react": "^0.6.2",
     "@thirdweb-dev/react": "^3.13.0",
     "@thirdweb-dev/sdk": "^3.10.20",
     "@types/node": "20.2.5",

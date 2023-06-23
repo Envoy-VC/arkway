@@ -10,7 +10,14 @@ import {
 	localWallet,
 } from '@thirdweb-dev/react';
 
-import { WALLET_CONNECT_ID } from '@/utils';
+import { PolybaseProvider } from '@polybase/react';
+import { Polybase } from '@polybase/client';
+
+import { WALLET_CONNECT_ID, POLYBASE_NAMESPACE } from '@/utils';
+
+export const polybase = new Polybase({
+	defaultNamespace: POLYBASE_NAMESPACE,
+});
 
 interface Props {
 	children: React.ReactNode;
@@ -26,19 +33,21 @@ const Layout = ({ children }: Props) => {
 				localWallet({ persist: true }),
 			]}
 		>
-			<NextUIProvider>
-				<>
-					<NavBar />
-					<div className='flex flex-row'>
-						<Sidebar />
-						<div className='w-full flex flex-col'>
-							<Header />
-							<Toolbar />
-							{children}
+			<PolybaseProvider polybase={polybase}>
+				<NextUIProvider>
+					<>
+						<NavBar />
+						<div className='flex flex-row'>
+							<Sidebar />
+							<div className='w-full flex flex-col'>
+								<Header />
+								<Toolbar />
+								{children}
+							</div>
 						</div>
-					</div>
-				</>
-			</NextUIProvider>
+					</>
+				</NextUIProvider>
+			</PolybaseProvider>
 		</ThirdwebProvider>
 	);
 };

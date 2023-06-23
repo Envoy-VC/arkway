@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { useDropzone } from 'react-dropzone';
-import { Button, Modal } from '@nextui-org/react';
-import { PaperPlus, PaperUpload } from 'react-iconly';
+import { Button, Modal, Progress } from '@nextui-org/react';
+import { PaperPlus, PaperUpload, Upload as UploadFile } from 'react-iconly';
 
 import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
@@ -27,8 +27,21 @@ const Upload = () => {
 		},
 	});
 
+	const [isUploading, setIsUploading] = React.useState<boolean>(false);
+	const [uploadProgress, setUploadProgress] = React.useState<number>(0);
+
 	const modalHandler = () => {
 		setIsModalOpen(!isModalOpen);
+	};
+
+	const handleUpload = async () => {
+		try {
+			setIsUploading(true);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setIsUploading(false);
+		}
 	};
 
 	return (
@@ -71,11 +84,36 @@ const Upload = () => {
 					</div>
 
 					{acceptedFiles.length > 0 && (
-						<div>
+						<div className='flex flex-col'>
+							<span className='text-lg font-semibold'>Files</span>
 							{acceptedFiles.map((file, index) => (
-								<div key={index}>{file.name}</div>
+								<div key={index} className='mt-2'>
+									{file.name.length > 50
+										? file.name.slice(0, 40) +
+										  '...' +
+										  file.name.slice(file.name.length - 10)
+										: file.name}
+								</div>
 							))}
 						</div>
+					)}
+
+					{!isUploading ? (
+						<Button
+							auto
+							className='text-white w-fit mx-auto text-lg font-medium bg-[#7828C8]'
+							icon={<UploadFile set='light' primaryColor='#fff' />}
+							onPress={handleUpload}
+						>
+							Upload
+						</Button>
+					) : (
+						<Progress
+							indeterminated={uploadProgress === 0 || uploadProgress === 100}
+							value={uploadProgress}
+							color='secondary'
+							status='secondary'
+						/>
 					)}
 				</Modal.Body>
 			</Modal>
