@@ -35,6 +35,9 @@ const Upload = () => {
 	const [uploadProgress, setUploadProgress] = React.useState<number>(0);
 
 	const modalHandler = () => {
+		setIsUploading(false);
+		acceptedFiles.length = 0;
+		setUploadProgress(0);
 		setIsModalOpen(!isModalOpen);
 	};
 
