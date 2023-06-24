@@ -7,6 +7,7 @@ import { PaperPlus, PaperUpload, Upload as UploadFile } from 'react-iconly';
 
 import { usePolybase, useDocument } from '@polybase/react';
 
+import { acceptedFileTypes } from '@/utils';
 import { FileType } from '@/types';
 
 import { Inter } from 'next/font/google';
@@ -18,21 +19,7 @@ const Upload = () => {
 
 	const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
 	const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-		accept: {
-			'image/png': ['.png'],
-			'image/jpeg': ['.jpeg'],
-			'application/msword': ['.doc'],
-			'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-				['.docx'],
-			'application/pdf': ['.pdf'],
-			'application/vnd.ms-powerpoint': ['.ppt'],
-			'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-				['.pptx'],
-			'application/vnd.ms-excel': ['.xls'],
-			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
-				'.xlsx',
-			],
-		},
+		accept: acceptedFileTypes,
 	});
 
 	const [isUploading, setIsUploading] = React.useState<boolean>(false);
@@ -67,9 +54,11 @@ const Upload = () => {
 				});
 				const metadata: FileType = {
 					name: file.name,
-					type: file.type,
 					size: file.size,
-					cid: fileCid,
+					createdAt: Date.now(),
+					isStarred: false,
+					isBookmarked: false,
+					secret: 'https://ipfs.io/ipfs/' + fileCid.slice(7),
 				};
 
 				const ipfsHash = await storage!.upload(JSON.stringify(metadata), {
@@ -79,7 +68,7 @@ const Upload = () => {
 				const res = await polybase
 					.collection('User')
 					.record(address!)
-					.call('addFile', [ipfsHash.slice(7)]);
+					.call('addFile', ['https://ipfs.io/ipfs/' + ipfsHash.slice(7)]);
 			} else {
 				const uris = await storage!.uploadBatch(acceptedFiles, {
 					alwaysUpload: true,
@@ -95,9 +84,11 @@ const Upload = () => {
 					const file = acceptedFiles[i];
 					metadata.push({
 						name: file.name,
-						type: file.type,
 						size: file.size,
-						cid: uris[i],
+						createdAt: Date.now(),
+						isStarred: false,
+						isBookmarked: false,
+						secret: 'https://ipfs.io/ipfs/' + uris.at(i)!.slice(7),
 					});
 				}
 
@@ -108,13 +99,15 @@ const Upload = () => {
 						uploadWithoutDirectory: false,
 						alwaysUpload: false,
 					})
-					.then((res) => (arr = res.map((hash) => hash.slice(7))));
+					.then(
+						(res) =>
+							(arr = res.map((hash) => 'https://ipfs.io/ipfs/' + hash.slice(7)))
+					);
 
 				const res = await polybase
 					.collection('User')
 					.record(address!)
 					.call('updateFiles', [[...data?.data.files, ...arr]]);
-				console.log(arr);
 			}
 		} catch (error) {
 			console.log(error);
