@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@lit-protocol/lit-node-client": "^2.2.26",
     "@nextui-org/react": "^1.0.0-beta.13",
     "@polybase/client": "^0.6.2",
     "@polybase/react": "^0.6.2",
