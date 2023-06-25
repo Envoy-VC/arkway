@@ -3,14 +3,17 @@ import React from 'react';
 import { useAddress, useStorage } from '@thirdweb-dev/react';
 import { usePolybase, useDocument } from '@polybase/react';
 
+import * as LitJsSdk from '@lit-protocol/lit-node-client';
+import { blobToBase64String } from '@lit-protocol/lit-node-client';
+
 import { Card, Image, Dropdown, Button } from '@nextui-org/react';
+import { LitContext } from '../layout';
 import { getFileSize, getDateTime, getFileIcon, isImage } from '@/services';
 
 import { FileType } from '@/types';
 import { VerticalDots } from '../icons';
 
 import { Inter } from 'next/font/google';
-import { isConstructorDeclaration } from 'typescript';
 const inter = Inter({ subsets: ['latin'] });
 
 const FileCard = ({
@@ -22,12 +25,31 @@ const FileCard = ({
 	secret,
 	encryptedMetadata,
 }: FileType) => {
+	const { litClient, state } = React.useContext(LitContext);
+	const { authSig } = state;
+
 	const address = useAddress();
+	const storage = useStorage();
+
 	const polybase = usePolybase();
 
 	const { data, error, loading } = useDocument(
 		polybase.collection('User').record(address!)
 	);
+
+	const addressAccessControl = [
+		{
+			contractAddress: '',
+			standardContractType: '',
+			chain: 'ethereum',
+			method: '',
+			parameters: [':userAddress'],
+			returnValueTest: {
+				comparator: '=',
+				value: address!,
+			},
+		},
+	];
 
 	const handleDownload = () => {
 		const link = document.createElement('a');
@@ -41,7 +63,6 @@ const FileCard = ({
 		const newFiles = data?.data?.files.filter(
 			(file: string) => file !== encryptedMetadata
 		);
-		console.log(newFiles);
 		const res = await polybase
 			.collection('User')
 			.record(address!)
@@ -49,7 +70,76 @@ const FileCard = ({
 		console.log(res);
 	};
 
-	const handleBookmark = async () => {}
+	const getEncryptedDataCid = async (metadata: string) => {
+		console.log(authSig);
+		const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
+			metadata
+		);
+
+		const encryptedSymmetricKeyArray = await litClient?.saveEncryptionKey({
+			accessControlConditions: addressAccessControl,
+			symmetricKey,
+			authSig,
+			chain: 'ethereum',
+		});
+		const encryptedSymmetricKey = LitJsSdk.uint8arrayToString(
+			encryptedSymmetricKeyArray!,
+			'base16'
+		);
+
+		const encryptedBase64String = await blobToBase64String(encryptedString);
+
+		const encryptedMetadataCid = await storage!.upload(
+			{
+				encryptedBase64String,
+				encryptedSymmetricKey,
+			},
+			{
+				uploadWithoutDirectory: true,
+				alwaysUpload: false,
+			}
+		);
+
+		return 'https://ipfs.io/ipfs/' + encryptedMetadataCid.slice(7);
+	};
+
+	const handleBookmarkAndStar = async (action: string) => {
+		let newMetadata;
+		if (action === 'bookmark') {
+			newMetadata = {
+				name: name,
+				size: size,
+				createdAt: createdAt,
+				isStarred: isStarred,
+				isBookmarked: !isBookmarked,
+				secret: secret,
+			};
+		} else if (action === 'star') {
+			newMetadata = {
+				name: name,
+				size: size,
+				createdAt: createdAt,
+				isStarred: !isStarred,
+				isBookmarked: isBookmarked,
+				secret: secret,
+			};
+		}
+
+		const encryptedMetadataCid = await getEncryptedDataCid(
+			JSON.stringify(newMetadata)
+		);
+
+		const newFiles = [
+			...data?.data?.files.filter((file: string) => file !== encryptedMetadata),
+			encryptedMetadataCid,
+		];
+
+		const res = await polybase
+			.collection('User')
+			.record(address!)
+			.call('updateFiles', [[...newFiles]]);
+		console.log(res);
+	};
 
 	const handleAction = async (actionKey: string) => {
 		if (actionKey === 'download') {
@@ -57,6 +147,8 @@ const FileCard = ({
 		} else if (actionKey === 'delete') {
 			console.log('deleting...');
 			await handleDelete();
+		} else if (actionKey === 'bookmark' || actionKey === 'star') {
+			await handleBookmarkAndStar(actionKey);
 		}
 	};
 	return (
@@ -93,8 +185,12 @@ const FileCard = ({
 									color='secondary'
 									onAction={(actionKey) => handleAction(actionKey as string)}
 								>
-									<Dropdown.Item key='star'>Star</Dropdown.Item>
-									<Dropdown.Item key='bookmark'>Bookmark</Dropdown.Item>
+									<Dropdown.Item key='star'>
+										{isStarred ? 'Remove Star' : 'Add Star'}
+									</Dropdown.Item>
+									<Dropdown.Item key='bookmark'>
+										{isBookmarked ? 'Remove Bookmark' : 'Add Bookmark'}
+									</Dropdown.Item>
 									<Dropdown.Item key='download'>Download</Dropdown.Item>
 									<Dropdown.Item key='delete' withDivider color='error'>
 										Delete
@@ -138,8 +234,12 @@ const FileCard = ({
 									color='secondary'
 									onAction={(actionKey) => handleAction(actionKey as string)}
 								>
-									<Dropdown.Item key='star'>Star</Dropdown.Item>
-									<Dropdown.Item key='bookmark'>Bookmark</Dropdown.Item>
+									<Dropdown.Item key='star'>
+										{isStarred ? 'Remove Star' : 'Add Star'}
+									</Dropdown.Item>
+									<Dropdown.Item key='bookmark'>
+										{isBookmarked ? 'Remove Bookmark' : 'Add Bookmark'}
+									</Dropdown.Item>
 									<Dropdown.Item key='download'>Download</Dropdown.Item>
 									<Dropdown.Item key='delete' withDivider color='error'>
 										Delete

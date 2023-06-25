@@ -7,10 +7,7 @@ import { PaperPlus, PaperUpload, Upload as UploadFile } from 'react-iconly';
 import { LitContext } from '@/components/layout';
 
 import * as LitJsSdk from '@lit-protocol/lit-node-client';
-import {
-	blobToBase64String,
-	base64StringToBlob,
-} from '@lit-protocol/lit-node-client';
+import { blobToBase64String } from '@lit-protocol/lit-node-client';
 import { usePolybase, useDocument } from '@polybase/react';
 
 import { acceptedFileTypes } from '@/utils';
