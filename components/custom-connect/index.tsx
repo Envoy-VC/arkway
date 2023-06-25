@@ -7,6 +7,9 @@ import {
 	useDisconnect,
 	useSDK,
 } from '@thirdweb-dev/react';
+
+import { checkAndSignAuthMessage } from '@lit-protocol/lit-node-client';
+
 import { Dropdown, Avatar, Button, Loading } from '@nextui-org/react';
 import { usePolybase, useDocument } from '@polybase/react';
 import { AddUser, Password } from 'react-iconly';
@@ -42,15 +45,9 @@ const CustomConnectButton = () => {
 	const handleAuthorize = async () => {
 		try {
 			setIsAuthorizing(true);
-			const message = 'Sign this message to authorize access to your account.';
-			const sig = await sdk?.wallet.sign(message);
-			if (!sig) return;
-			const _authSig = {
-				sig,
-				derivedVia: 'sdk.userwallet.sign',
-				signedMessage: message,
-				address: address!,
-			};
+			const _authSig = await checkAndSignAuthMessage({
+				chain: 'ethereum',
+			});
 			dispatch({ type: ActionType.SET_AUTH_SIG, payload: _authSig });
 		} catch (error) {
 			console.log(error);

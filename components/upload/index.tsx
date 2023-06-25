@@ -4,16 +4,26 @@ import { useDropzone } from 'react-dropzone';
 import { useAddress, useStorage } from '@thirdweb-dev/react';
 import { Button, Modal, Progress } from '@nextui-org/react';
 import { PaperPlus, PaperUpload, Upload as UploadFile } from 'react-iconly';
+import { LitContext } from '@/components/layout';
 
+import * as LitJsSdk from '@lit-protocol/lit-node-client';
+import {
+	blobToBase64String,
+	base64StringToBlob,
+} from '@lit-protocol/lit-node-client';
 import { usePolybase, useDocument } from '@polybase/react';
 
 import { acceptedFileTypes } from '@/utils';
 import { FileType } from '@/types';
 
 import { Inter } from 'next/font/google';
+
 const inter = Inter({ subsets: ['latin'] });
 
 const Upload = () => {
+	const { litClient, state } = React.useContext(LitContext);
+	const { authSig } = state;
+
 	const address = useAddress();
 	const storage = useStorage();
 
@@ -35,6 +45,53 @@ const Upload = () => {
 		acceptedFiles.length = 0;
 		setUploadProgress(0);
 		setIsModalOpen(!isModalOpen);
+	};
+
+	const addressAccessControl = [
+		{
+			contractAddress: '',
+			standardContractType: '',
+			chain: 'ethereum',
+			method: '',
+			parameters: [':userAddress'],
+			returnValueTest: {
+				comparator: '=',
+				value: address!,
+			},
+		},
+	];
+
+	const getEncryptedDataCid = async (metadataCid: string) => {
+		console.log(authSig);
+		const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
+			'https://ipfs.io/ipfs/' + metadataCid.slice(7)
+		);
+
+		const encryptedSymmetricKeyArray = await litClient?.saveEncryptionKey({
+			accessControlConditions: addressAccessControl,
+			symmetricKey,
+			authSig,
+			chain: 'ethereum',
+		});
+		const encryptedSymmetricKey = LitJsSdk.uint8arrayToString(
+			encryptedSymmetricKeyArray!,
+			'base16'
+		);
+
+		const encryptedBase64String = await blobToBase64String(encryptedString);
+
+		const encryptedMetadataCid = await storage!.upload(
+			{
+				encryptedBase64String,
+				encryptedSymmetricKey,
+			},
+			{
+				uploadWithoutDirectory: true,
+				alwaysUpload: false,
+			}
+		);
+
+		return 'https://ipfs.io/ipfs/' + encryptedMetadataCid.slice(7);
 	};
 
 	const handleUpload = async () => {
@@ -61,14 +118,17 @@ const Upload = () => {
 					secret: 'https://ipfs.io/ipfs/' + fileCid.slice(7),
 				};
 
-				const ipfsHash = await storage!.upload(JSON.stringify(metadata), {
+				const metadataCid = await storage!.upload(JSON.stringify(metadata), {
 					uploadWithoutDirectory: true,
 					alwaysUpload: false,
 				});
+
+				const encryptedMetadataCid = await getEncryptedDataCid(metadataCid);
+
 				const res = await polybase
 					.collection('User')
 					.record(address!)
-					.call('addFile', ['https://ipfs.io/ipfs/' + ipfsHash.slice(7)]);
+					.call('addFile', [encryptedMetadataCid]);
 			} else {
 				const uris = await storage!.uploadBatch(acceptedFiles, {
 					alwaysUpload: true,
@@ -94,20 +154,21 @@ const Upload = () => {
 
 				let arr: string[] = [];
 
-				const cids = await storage!
-					.uploadBatch(metadata, {
-						uploadWithoutDirectory: false,
-						alwaysUpload: false,
-					})
-					.then(
-						(res) =>
-							(arr = res.map((hash) => 'https://ipfs.io/ipfs/' + hash.slice(7)))
-					);
+				const cids = await storage!.uploadBatch(metadata, {
+					uploadWithoutDirectory: false,
+					alwaysUpload: false,
+				});
+
+				const encryptedMetadataCids = await Promise.all(
+					cids.map((cid) => getEncryptedDataCid(cid))
+				);
 
 				const res = await polybase
 					.collection('User')
 					.record(address!)
-					.call('updateFiles', [[...data?.data.files, ...arr]]);
+					.call('updateFiles', [
+						[...data?.data.files, ...encryptedMetadataCids],
+					]);
 			}
 		} catch (error) {
 			console.log(error);
