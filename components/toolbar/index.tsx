@@ -93,7 +93,7 @@ const Toolbar = () => {
 					<Dropdown>
 						<Dropdown.Button
 							bordered
-							className='!w-fit text-black'
+							className='!w-fit text-black bg-white'
 							css={{ borderColor: '#fff' }}
 						>
 							<div className='flex flex-row justify-start items-center gap-2'>

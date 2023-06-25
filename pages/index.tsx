@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import type { ReactElement } from 'react';
 import type { NextPageWithLayout } from './_app';
 
@@ -8,6 +8,7 @@ import { usePolybase, useDocument } from '@polybase/react';
 import Layout from '@/components/layout';
 import NestedLayout from '@/components/layout/nested-layout';
 import { Toolbar, FileCard } from '@/components';
+import { LitContext } from '@/components/layout';
 
 import { FileType } from '@/types';
 
@@ -15,6 +16,8 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 const Home: NextPageWithLayout = () => {
+	const { state, litClient } = useContext(LitContext);
+
 	const address = useAddress();
 	const storage = useStorage();
 
@@ -47,7 +50,7 @@ const Home: NextPageWithLayout = () => {
 	return (
 		<main className={`${inter.className} bg-[#F6F6F6] h-full`}>
 			<Toolbar />
-			{filteredFiles && (
+			{filteredFiles && state.authSig && (
 				<div className='flex flex-row flex-wrap gap-4 items-center justify-around lg:justify-start p-8'>
 					{filteredFiles.map((file: FileType, index: number) => (
 						<FileCard key={index} {...file} />

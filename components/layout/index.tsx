@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext, useReducer } from 'react';
 import { NavBar, Sidebar, Header } from '@/components';
 
 import { NextUIProvider } from '@nextui-org/react';
@@ -12,6 +12,22 @@ import {
 
 import { PolybaseProvider } from '@polybase/react';
 import { Polybase } from '@polybase/client';
+import * as LitJsSdk from '@lit-protocol/lit-node-client';
+import { AuthSig } from '@/types';
+import { SetAuthSig, reducer } from '@/services/reducer';
+
+const initialState = {};
+
+export type LitState = {
+	authSig?: AuthSig;
+};
+
+export const LitContext = createContext<{
+	state: LitState;
+	dispatch: React.Dispatch<SetAuthSig>;
+	litClient: LitJsSdk.LitNodeClient | undefined;
+}>({ state: initialState, dispatch: () => undefined, litClient: undefined });
+
 import { Tabs } from '@/types';
 
 import { WALLET_CONNECT_ID, POLYBASE_NAMESPACE } from '@/utils';
@@ -26,6 +42,24 @@ interface Props {
 
 const Layout = ({ children }: Props) => {
 	const [activeTab, setActiveTab] = React.useState<Tabs>('home');
+	const [litClient, setLitClient] = React.useState<LitJsSdk.LitNodeClient>();
+
+	const [state, dispatch] = useReducer(reducer, initialState);
+
+	React.useEffect(() => {
+		const connectToLit = async () => {
+			const client = new LitJsSdk.LitNodeClient({
+				litNetwork: 'serrano',
+				debug: true,
+			});
+			await client.connect();
+			return client;
+		};
+
+		connectToLit().then(async (lc) => {
+			setLitClient(lc);
+		});
+	}, []);
 	return (
 		<ThirdwebProvider
 			theme='light'
@@ -36,18 +70,20 @@ const Layout = ({ children }: Props) => {
 			]}
 		>
 			<PolybaseProvider polybase={polybase}>
-				<NextUIProvider>
-					<>
-						<NavBar activeTab={activeTab} setActiveTab={setActiveTab} />
-						<div className='flex flex-row'>
-							<Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-							<div className='w-full flex flex-col'>
-								<Header />
-								{children}
+				<LitContext.Provider value={{ state, dispatch, litClient }}>
+					<NextUIProvider>
+						<>
+							<NavBar activeTab={activeTab} setActiveTab={setActiveTab} />
+							<div className='flex flex-row'>
+								<Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+								<div className='w-full flex flex-col'>
+									<Header />
+									{children}
+								</div>
 							</div>
-						</div>
-					</>
-				</NextUIProvider>
+						</>
+					</NextUIProvider>
+				</LitContext.Provider>
 			</PolybaseProvider>
 		</ThirdwebProvider>
 	);

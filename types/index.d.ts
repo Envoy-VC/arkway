@@ -8,3 +8,10 @@ export type FileType = {
 	isBookmarked: boolean;
 	secret: string;
 };
+
+export type AuthSig = {
+	sig: any;
+	derivedVia: string;
+	signedMessage: string;
+	address: string;
+};
