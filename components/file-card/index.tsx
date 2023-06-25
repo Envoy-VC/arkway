@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { useAddress, useStorage } from '@thirdweb-dev/react';
+import { usePolybase, useDocument } from '@polybase/react';
+
 import { Card, Image, Dropdown, Button } from '@nextui-org/react';
 import { getFileSize, getDateTime, getFileIcon, isImage } from '@/services';
 
@@ -7,6 +10,7 @@ import { FileType } from '@/types';
 import { VerticalDots } from '../icons';
 
 import { Inter } from 'next/font/google';
+import { isConstructorDeclaration } from 'typescript';
 const inter = Inter({ subsets: ['latin'] });
 
 const FileCard = ({
@@ -18,6 +22,13 @@ const FileCard = ({
 	secret,
 	encryptedMetadata,
 }: FileType) => {
+	const address = useAddress();
+	const polybase = usePolybase();
+
+	const { data, error, loading } = useDocument(
+		polybase.collection('User').record(address!)
+	);
+
 	const handleDownload = () => {
 		const link = document.createElement('a');
 		link.download = name;
@@ -26,9 +37,26 @@ const FileCard = ({
 		link.click();
 	};
 
-	const handleAction = (actionKey: string) => {
+	const handleDelete = async () => {
+		const newFiles = data?.data?.files.filter(
+			(file: string) => file !== encryptedMetadata
+		);
+		console.log(newFiles);
+		const res = await polybase
+			.collection('User')
+			.record(address!)
+			.call('updateFiles', [[...newFiles]]);
+		console.log(res);
+	};
+
+	const handleBookmark = async () => {}
+
+	const handleAction = async (actionKey: string) => {
 		if (actionKey === 'download') {
 			handleDownload();
+		} else if (actionKey === 'delete') {
+			console.log('deleting...');
+			await handleDelete();
 		}
 	};
 	return (
@@ -68,7 +96,7 @@ const FileCard = ({
 									<Dropdown.Item key='star'>Star</Dropdown.Item>
 									<Dropdown.Item key='bookmark'>Bookmark</Dropdown.Item>
 									<Dropdown.Item key='download'>Download</Dropdown.Item>
-									<Dropdown.Item key='logout' withDivider color='error'>
+									<Dropdown.Item key='delete' withDivider color='error'>
 										Delete
 									</Dropdown.Item>
 								</Dropdown.Menu>
@@ -113,7 +141,7 @@ const FileCard = ({
 									<Dropdown.Item key='star'>Star</Dropdown.Item>
 									<Dropdown.Item key='bookmark'>Bookmark</Dropdown.Item>
 									<Dropdown.Item key='download'>Download</Dropdown.Item>
-									<Dropdown.Item key='logout' withDivider color='error'>
+									<Dropdown.Item key='delete' withDivider color='error'>
 										Delete
 									</Dropdown.Item>
 								</Dropdown.Menu>
