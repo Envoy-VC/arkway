@@ -19,13 +19,18 @@ const FileCard = ({
 }: FileType) => {
 	return (
 		<Card
+			isHoverable
 			variant='flat'
-			className={`${inter.className} shadow-sm rounded--[1.25rem] hover:bg-[#f7f9fc] transition-all duration-300 ease-in-out`}
+			className={`${inter.className} shadow-sm rounded--[1.25rem] hover:bg-[#f7f9fc] transition-all duration-300 ease-in-out hover:shadow-none`}
 			css={{
 				mw: '286px',
 				height: 'fit-content',
 				backgroundColor: '#fff',
 				border: '1px',
+				'@hover': {
+					shadow: '$xs',
+					boxShadow: 'none',
+				},
 			}}
 		>
 			<Card.Header css={{ p: '0px', h: '144px' }}>
@@ -48,6 +53,7 @@ const FileCard = ({
 								>
 									<Dropdown.Item key='star'>Star</Dropdown.Item>
 									<Dropdown.Item key='bookmark'>Bookmark</Dropdown.Item>
+									<Dropdown.Item key='download'>Download</Dropdown.Item>
 									<Dropdown.Item key='logout' withDivider color='error'>
 										Delete
 									</Dropdown.Item>
@@ -92,6 +98,7 @@ const FileCard = ({
 								>
 									<Dropdown.Item key='star'>Star</Dropdown.Item>
 									<Dropdown.Item key='bookmark'>Bookmark</Dropdown.Item>
+									<Dropdown.Item key='download'>Download</Dropdown.Item>
 									<Dropdown.Item key='logout' withDivider color='error'>
 										Delete
 									</Dropdown.Item>
@@ -103,18 +110,18 @@ const FileCard = ({
 			</Card.Header>
 			<Card.Body>
 				<div className='flex flex-col justify-between py-2 pb-6'>
-					<span className='text-xl font-bold'>
+					<span className='text-md font-bold'>
 						{name.length > 20
 							? name.slice(0, 15) + '...' + name.slice(name.length - 5)
 							: name}
 					</span>
-					<span className='text-md font-normal text-[#9B9B9B]'>
+					<span className='text-sm font-normal text-[#9B9B9B]'>
 						{getDateTime(createdAt)}
 					</span>
 				</div>
 			</Card.Body>
-			<Card.Footer isBlurred className='bg-[#f0f0f0b4]'>
-				<div className='text-md font-semibold py-2 px-2'>
+			<Card.Footer isBlurred className='bg-[#faf7fc]'>
+				<div className='text-sm font-semibold py-0 px-2'>
 					{getFileSize(size)}
 				</div>
 			</Card.Footer>
