@@ -7,7 +7,7 @@ export type FileType = {
 	isStarred: boolean;
 	isBookmarked: boolean;
 	secret: string;
-	encryptedBase64String: string;
+	encryptedMetadata?: string;
 };
 
 export type AuthSig = {

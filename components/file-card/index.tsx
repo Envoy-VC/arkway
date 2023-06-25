@@ -16,7 +16,21 @@ const FileCard = ({
 	isStarred,
 	isBookmarked,
 	secret,
+	encryptedMetadata,
 }: FileType) => {
+	const handleDownload = () => {
+		const link = document.createElement('a');
+		link.download = name;
+		link.href = secret;
+		link.target = '_blank';
+		link.click();
+	};
+
+	const handleAction = (actionKey: string) => {
+		if (actionKey === 'download') {
+			handleDownload();
+		}
+	};
 	return (
 		<Card
 			isHoverable
@@ -49,7 +63,7 @@ const FileCard = ({
 								<Dropdown.Menu
 									aria-label='User menu actions'
 									color='secondary'
-									onAction={(actionKey) => console.log({ actionKey })}
+									onAction={(actionKey) => handleAction(actionKey as string)}
 								>
 									<Dropdown.Item key='star'>Star</Dropdown.Item>
 									<Dropdown.Item key='bookmark'>Bookmark</Dropdown.Item>
@@ -94,7 +108,7 @@ const FileCard = ({
 								<Dropdown.Menu
 									aria-label='User menu actions'
 									color='secondary'
-									onAction={(actionKey) => console.log({ actionKey })}
+									onAction={(actionKey) => handleAction(actionKey as string)}
 								>
 									<Dropdown.Item key='star'>Star</Dropdown.Item>
 									<Dropdown.Item key='bookmark'>Bookmark</Dropdown.Item>

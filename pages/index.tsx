@@ -70,7 +70,7 @@ const Home: NextPageWithLayout = () => {
 							);
 							return {
 								...JSON.parse(decryptedString),
-								encryptedBase64String: uri,
+								encryptedMetadata: uri,
 							};
 						};
 						const metadataArr = await decryptFile();
@@ -90,7 +90,7 @@ const Home: NextPageWithLayout = () => {
 	return (
 		<main className={`${inter.className} bg-[#F6F6F6] h-full`}>
 			<Toolbar />
-			{filteredFiles && state.authSig && (
+			{filteredFiles && state.authSig && address && (
 				<div className='flex flex-row flex-wrap gap-4 items-center justify-around lg:justify-start p-8'>
 					{filteredFiles.map((file: FileType, index: number) => (
 						<FileCard key={index} {...file} />
