@@ -92,9 +92,11 @@ const Home: NextPageWithLayout = () => {
 			<Toolbar />
 			{filteredFiles && state.authSig && address && (
 				<div className='flex flex-row flex-wrap gap-4 items-center justify-around lg:justify-start p-8'>
-					{filteredFiles.map((file: FileType, index: number) => (
-						<FileCard key={index} {...file} />
-					))}
+					{filteredFiles
+						.sort((a, b) => b.createdAt - a.createdAt)
+						.map((file: FileType, index: number) => (
+							<FileCard key={index} {...file} />
+						))}
 				</div>
 			)}
 		</main>
