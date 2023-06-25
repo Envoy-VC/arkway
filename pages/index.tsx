@@ -29,7 +29,7 @@ const Home: NextPageWithLayout = () => {
 		polybase.collection('User').record(address!)
 	);
 
-	const [decryptedFiles, setDecryptedFiles] = React.useState<string[]>([]);
+	const [decryptedFiles, setDecryptedFiles] = React.useState<FileType[]>([]);
 	const [filteredFiles, setFilteredFiles] = React.useState<FileType[]>([]);
 
 	const addressAccessControl = [
@@ -50,7 +50,7 @@ const Home: NextPageWithLayout = () => {
 		const resolveFiles = async () => {
 			const files = data?.data.files;
 			if (files) {
-				const resolvedFiles: string[] = await Promise.all(
+				const resolvedFiles: FileType[] = await Promise.all(
 					files.map(async (uri: string) => {
 						const res = await storage!.downloadJSON(uri);
 						const decryptFile = async () => {
@@ -68,14 +68,17 @@ const Home: NextPageWithLayout = () => {
 								encryptedString,
 								symmetricKey
 							);
-							console.log(decryptedString);
-							return decryptedString;
+							return {
+								...JSON.parse(decryptedString),
+								encryptedBase64String: uri,
+							};
 						};
-						const decryptedFile = await decryptFile();
-						return decryptedFile;
+						const metadataArr = await decryptFile();
+						return metadataArr;
 					})
 				);
 				setDecryptedFiles(resolvedFiles);
+				setFilteredFiles(resolvedFiles);
 				console.log(resolvedFiles);
 			}
 		};
@@ -83,22 +86,6 @@ const Home: NextPageWithLayout = () => {
 			resolveFiles();
 		}
 	}, [data?.data.files, state.authSig, litClient]);
-
-	React.useEffect(() => {
-		const resolveFiles = async () => {
-			const resolvedFiles: FileType[] = await Promise.all(
-				decryptedFiles.map(async (uri: string) => {
-					const file: FileType = await storage!.downloadJSON(uri);
-					return file;
-				})
-			);
-			setFilteredFiles(resolvedFiles);
-			console.log(resolvedFiles);
-		};
-		if (decryptedFiles) {
-			resolveFiles();
-		}
-	}, [decryptedFiles]);
 
 	return (
 		<main className={`${inter.className} bg-[#F6F6F6] h-full`}>

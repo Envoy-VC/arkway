@@ -61,10 +61,10 @@ const Upload = () => {
 		},
 	];
 
-	const getEncryptedDataCid = async (metadataCid: string) => {
+	const getEncryptedDataCid = async (metadata: string) => {
 		console.log(authSig);
 		const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
-			'https://ipfs.io/ipfs/' + metadataCid.slice(7)
+			metadata
 		);
 
 		const encryptedSymmetricKeyArray = await litClient?.saveEncryptionKey({
@@ -118,12 +118,9 @@ const Upload = () => {
 					secret: 'https://ipfs.io/ipfs/' + fileCid.slice(7),
 				};
 
-				const metadataCid = await storage!.upload(JSON.stringify(metadata), {
-					uploadWithoutDirectory: true,
-					alwaysUpload: false,
-				});
-
-				const encryptedMetadataCid = await getEncryptedDataCid(metadataCid);
+				const encryptedMetadataCid = await getEncryptedDataCid(
+					JSON.stringify(metadata)
+				);
 
 				const res = await polybase
 					.collection('User')
@@ -139,10 +136,10 @@ const Upload = () => {
 					},
 				});
 
-				const metadata: FileType[] = [];
+				const metadataArr: FileType[] = [];
 				for (let i = 0; i < acceptedFiles.length; i++) {
 					const file = acceptedFiles[i];
-					metadata.push({
+					metadataArr.push({
 						name: file.name,
 						size: file.size,
 						createdAt: Date.now(),
@@ -152,15 +149,10 @@ const Upload = () => {
 					});
 				}
 
-				let arr: string[] = [];
-
-				const cids = await storage!.uploadBatch(metadata, {
-					uploadWithoutDirectory: false,
-					alwaysUpload: false,
-				});
-
 				const encryptedMetadataCids = await Promise.all(
-					cids.map((cid) => getEncryptedDataCid(cid))
+					metadataArr.map((metadata) =>
+						getEncryptedDataCid(JSON.stringify(metadata))
+					)
 				);
 
 				const res = await polybase
