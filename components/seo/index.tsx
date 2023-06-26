@@ -12,7 +12,7 @@ const SEO = () => (
 					'Redefining File Storage. Store, Encrypt, and Access Your Documents Anytime, Anywhere.',
 				images: [
 					{
-						url: 'https://ipfs.io/ipfs/QmPiSGLoWtgyYE6HrMa6K5mUnAoN8NQDrk4YkTmX5pdDnR',
+						url: 'https://ipfs.io/ipfs/QmWmkAk9U78S2Q5Y2BpuyEsH6jy8rq3L5xN56KJP2UjvzK',
 						width: 1200,
 						height: 630,
 						alt: 'Arkway Open Graph Image',
