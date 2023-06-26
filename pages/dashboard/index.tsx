@@ -4,7 +4,7 @@ import type { NextPageWithLayout } from '../_app';
 
 import Layout from '@/components/layout';
 import NestedLayout from '@/components/layout/nested-layout';
-
+import { LitContext } from '@/components/layout';
 import { Input, Button, Avatar, Loading } from '@nextui-org/react';
 import { Upload, Edit, Delete } from 'react-iconly';
 
@@ -22,6 +22,7 @@ type Profile = {
 const Dashboard: NextPageWithLayout = () => {
 	const address = useAddress();
 	const storage = useStorage();
+	const { litClient, state } = React.useContext(LitContext);
 
 	const polybase = usePolybase();
 	const { data, error, loading } = useDocument(
@@ -85,7 +86,11 @@ const Dashboard: NextPageWithLayout = () => {
 
 	return (
 		<main className={`${inter.className} px-4 mx-auto mt-16`}>
-			{data !== null && error?.code !== 'not-found' ? (
+			{data !== null &&
+			error?.code !== 'not-found' &&
+			!address &&
+			!litClient &&
+			!state?.authSig ? (
 				<div>
 					<div className='flex flex-col xl:flex-row w-full justify-start items-center gap-24'>
 						<Input
