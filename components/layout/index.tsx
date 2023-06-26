@@ -69,8 +69,9 @@ const Layout = ({ children }: Props) => {
 				name: 'Arkway',
 				description:
 					'Store, Encrypt, and Access Your Documents Anytime, Anywhere.',
-				logoUrl: 'https://example.com/logo.png',
-				url: 'https://ipfs.io/ipfs/QmWo2sGeNupqKBJ8hVFZUydCSrDo7usbnCn4T2fduuXTs6',
+				logoUrl:
+					'https://ipfs.io/ipfs/QmWo2sGeNupqKBJ8hVFZUydCSrDo7usbnCn4T2fduuXTs6',
+				url: 'https://arkway.vercel.app',
 				isDarkMode: false,
 			}}
 			supportedWallets={[
