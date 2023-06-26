@@ -1,0 +1,60 @@
+@public
+collection User {
+  id: string;
+  publicKey: PublicKey;
+  
+  name?: string;
+  avatar?: string;
+  files?: string[];
+
+  constructor(_address: string) {
+    if (!ctx.publicKey) {
+      error('Signature not Verified');
+    }
+    this.id = _address;
+    this.files = [];
+    this.publicKey = ctx.publicKey;
+  }
+
+  @call
+  updateUser(_name?: string, _avatar?: string) {
+    // Verify User Signature
+    if(ctx.publicKey != this.publicKey) {
+      throw error('Error: Cannot Update Details');
+    }
+    // Update Details
+    if(_name) {
+      this.name = _name;
+    }
+    if(_avatar) {
+      this.avatar = _avatar;
+    }
+  }
+
+  @call
+  addFile(file: string) {
+    // Verify User Signature
+    if(ctx.publicKey != this.publicKey) {
+      throw error('Error: Cannot Add File');
+    }
+    this.files.push(file);
+  }
+
+  @call
+  updateFiles(_files: string[]) {
+    // Verify User Signature
+    if(ctx.publicKey != this.publicKey) {
+      throw error('Error: Cannot Update Files');
+    }
+    this.files = _files;
+  }
+  
+  @call
+  deleteAccount() {
+    // Verify User Signature
+    if(ctx.publicKey != this.publicKey) {
+      throw error('Error: Not Owner');
+    }
+    selfdestruct();
+  }
+}

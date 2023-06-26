@@ -63,7 +63,7 @@ npm install
 Now, let's set up the database schema. The schema defines the structure and organization of the database. To do this, follow these steps:
 
 1. Navigate to the schema folder within the project.
-2. Open the `index.ts` file. This file contains the schema for the database.
+2. Open the `index` file. This file contains the schema for the database.
 3. To deploy the schema, you can refer to the documentation at https://polybase.xyz/docs/collections. It will guide you on how to create and deploy a schema.
 4. After creating the schema, you will receive a collection namespace. This is a unique identifier for your schema. Store this namespace in a file named `.env.local`.
 
