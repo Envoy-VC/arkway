@@ -4,6 +4,8 @@ import { Button, Dropdown, Image } from '@nextui-org/react';
 import { Filter2, InfoSquare, Paper } from 'react-iconly';
 
 import Upload from '../upload';
+import { FileType } from '@/types';
+import { filterFiles } from '@/services';
 
 import {
 	pdfs,
@@ -24,7 +26,17 @@ type DocumentTypes =
 	| 'Spreadsheets'
 	| 'Presentations';
 
-const Toolbar = () => {
+interface Props {
+	decryptedFiles: FileType[];
+	filteredFiles: FileType[];
+	setFilteredFiles: React.Dispatch<React.SetStateAction<FileType[]>>;
+}
+
+const Toolbar = ({
+	decryptedFiles,
+	filteredFiles,
+	setFilteredFiles,
+}: Props) => {
 	const [isFilterSelected, setIsFilterSelected] =
 		React.useState<boolean>(false);
 	const [selectedType, setSelectedType] = React.useState<DocumentTypes>('All');
@@ -72,6 +84,24 @@ const Toolbar = () => {
 		},
 	];
 
+	const handleFilter = (value: DocumentTypes) => {
+		if (value === 'All') {
+			setFilteredFiles(decryptedFiles);
+		} else if (value === 'Documents') {
+			setFilteredFiles(filterFiles(decryptedFiles, ['doc', 'docx']));
+		} else if (value === 'PDFs') {
+			setFilteredFiles(filterFiles(decryptedFiles, ['pdf']));
+		} else if (value === 'Photos') {
+			setFilteredFiles(filterFiles(decryptedFiles, ['png', 'jpg', 'jpeg']));
+		} else if (value === 'Spreadsheets') {
+			setFilteredFiles(filterFiles(decryptedFiles, ['xlsx', 'xls']));
+		} else if (value === 'Presentations') {
+			setFilteredFiles(filterFiles(decryptedFiles, ['ppt', 'pptx']));
+		} else {
+			setFilteredFiles(decryptedFiles);
+		}
+	};
+
 	return (
 		<div className={`${inter.className} flex flex-col bg-[#F6F6F6]`}>
 			<div
@@ -115,9 +145,10 @@ const Toolbar = () => {
 							disallowEmptySelection
 							selectionMode='single'
 							selectedKeys={selectedType}
-							onSelectionChange={(value: any) =>
-								setSelectedType(value.currentKey)
-							}
+							onSelectionChange={(value: any) => {
+								setSelectedType(value.currentKey);
+								handleFilter(value.currentKey as DocumentTypes);
+							}}
 						>
 							{filters.map((filter) => (
 								<Dropdown.Item key={filter.name} icon={filter.icon}>

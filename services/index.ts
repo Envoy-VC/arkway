@@ -6,6 +6,7 @@ import {
 	presentations,
 	spreadsheets,
 } from '@/public/icons';
+import { FileType } from '@/types';
 
 export const getFileSize = (size: number) => {
 	const i = Math.floor(Math.log(size) / Math.log(1024));
@@ -53,4 +54,12 @@ export const isImage = (filename: string) => {
 	} else {
 		return false;
 	}
+};
+
+// filter files based on type argument array of files
+export const filterFiles = (files: FileType[], type: string[]) => {
+	return files.filter((file) => {
+		const extension = file.name.slice(file.name.lastIndexOf('.') + 1);
+		return type.includes(extension);
+	});
 };

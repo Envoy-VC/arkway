@@ -7,6 +7,7 @@ export const POLYBASE_NAMESPACE =
 export const acceptedFileTypes = {
 	'image/png': ['.png'],
 	'image/jpeg': ['.jpeg'],
+	'image/jpg': ['.jpg'],
 	'application/msword': ['.doc'],
 	'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [
 		'.docx',
