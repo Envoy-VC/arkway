@@ -5,6 +5,7 @@ import CustomConnectButton from './custom-connect';
 import Toolbar from './toolbar';
 import Upload from './upload';
 import FileCard from './file-card';
+import SEO from './seo';
 
 export {
 	NavBar,
@@ -14,4 +15,5 @@ export {
 	Toolbar,
 	Upload,
 	FileCard,
+	SEO,
 };

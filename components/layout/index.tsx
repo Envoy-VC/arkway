@@ -10,6 +10,8 @@ import {
 	localWallet,
 } from '@thirdweb-dev/react';
 
+import { SEO } from '@/components';
+
 import { PolybaseProvider } from '@polybase/react';
 import { Polybase } from '@polybase/client';
 import * as LitJsSdk from '@lit-protocol/lit-node-client';
@@ -73,6 +75,7 @@ const Layout = ({ children }: Props) => {
 				<LitContext.Provider value={{ state, dispatch, litClient }}>
 					<NextUIProvider>
 						<>
+							<SEO />
 							<NavBar activeTab={activeTab} setActiveTab={setActiveTab} />
 							<div className='flex flex-row'>
 								<Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />

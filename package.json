@@ -1,5 +1,5 @@
 {
-  "name": "becrypt",
+  "name": "arkway",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -23,6 +23,7 @@
     "eslint-config-next": "13.4.4",
     "ethers": "^5.7.2",
     "next": "13.4.4",
+    "next-seo": "^6.1.0",
     "next-themes": "^0.2.1",
     "postcss": "8.4.24",
     "react": "18.2.0",
