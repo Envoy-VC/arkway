@@ -16,3 +16,11 @@ export type AuthSig = {
 	signedMessage: string;
 	address: string;
 };
+
+export type UploadState =
+	| 'idle'
+	| 'uploading-files'
+	| 'encrypting-files'
+	| 'uploading-encrypted-metadata'
+	| 'error'
+	| 'success';
