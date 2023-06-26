@@ -86,7 +86,12 @@ const Dashboard: NextPageWithLayout = () => {
 
 	return (
 		<main className={`${inter.className} px-4 mx-auto mt-16`}>
-			{data !== null && error?.code !== 'not-found' ? (
+			{data !== null &&
+			error?.code !== 'not-found' &&
+			address &&
+			litClient &&
+			!loading &&
+			state?.authSig ? (
 				<div>
 					<div className='flex flex-col xl:flex-row w-full justify-start items-center gap-24'>
 						<Input

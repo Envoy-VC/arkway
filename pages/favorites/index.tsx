@@ -92,7 +92,8 @@ const Favorites: NextPageWithLayout = () => {
 			{filteredFiles &&
 				state.authSig &&
 				address &&
-				error?.code !== 'not-found' && (
+				error?.code !== 'not-found' &&
+				!loading && (
 					<>
 						<Toolbar
 							decryptedFiles={decryptedFiles}
