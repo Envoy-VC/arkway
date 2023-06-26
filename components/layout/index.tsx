@@ -65,6 +65,14 @@ const Layout = ({ children }: Props) => {
 	return (
 		<ThirdwebProvider
 			theme='light'
+			dAppMeta={{
+				name: 'Arkway',
+				description:
+					'Store, Encrypt, and Access Your Documents Anytime, Anywhere.',
+				logoUrl: 'https://example.com/logo.png',
+				url: 'https://ipfs.io/ipfs/QmWo2sGeNupqKBJ8hVFZUydCSrDo7usbnCn4T2fduuXTs6',
+				isDarkMode: false,
+			}}
 			supportedWallets={[
 				metamaskWallet(),
 				walletConnect({ projectId: WALLET_CONNECT_ID }),
