@@ -30,6 +30,8 @@ When it comes time to decrypt the file, we use the encrypted symmetrical key to 
 
 You can find the video demo [here](https://youtu.be/IWUhJVC9kvg):
 
+https://github.com/Envoy-VC/arkway/assets/65389981/75b9f0d4-9898-44a5-bf88-a3742e6b063b
+
 https://youtu.be/IWUhJVC9kvg
 
 ---
